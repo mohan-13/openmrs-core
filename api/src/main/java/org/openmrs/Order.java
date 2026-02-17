@@ -91,6 +91,22 @@ public class Order extends BaseCustomizableData<OrderAttribute> implements FormR
 		DECLINED,
 		COMPLETED
 	}
+
+	/**
+	 * Represents the clinical intent of an order, aligned with FHIR R4 RequestIntent value set.
+	 */
+	public enum Intent {
+		PROPOSAL,
+		PLAN,
+		DIRECTIVE,
+		ORDER,
+		ORIGINAL_ORDER,
+		REFLEX_ORDER,
+		FILLER_ORDER,
+		INSTANCE_ORDER,
+		OPTION
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "order_id")
@@ -212,7 +228,18 @@ public class Order extends BaseCustomizableData<OrderAttribute> implements FormR
 	 */
 	@Column(name = "fulfiller_comment", length = 1024)
 	private String fulfillerComment;
-	
+
+	/**
+	 * Represents the clinical intent of an order, aligned with FHIR R4 RequestIntent.
+	 * Defaults to ORDER for backward compatibility.
+	 * @see Intent
+	 * @since 2.8.0
+	 */
+	@Enumerated(EnumType.STRING)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(name = "intent", length = 50)
+	private Intent intent = Intent.ORDER;
+
 	// Constructors
 	
 	/** default constructor */
@@ -273,10 +300,11 @@ public class Order extends BaseCustomizableData<OrderAttribute> implements FormR
 		target.setSortWeight(getSortWeight());
 		target.setFulfillerComment(getFulfillerComment());
 		target.setFulfillerStatus(getFulfillerStatus());
+		target.setIntent(getIntent());
 		target.setFormNamespaceAndPath(getFormNamespaceAndPath());
 		return target;
 	}
-	
+
 	// Property accessors
 	
 	/**
@@ -873,11 +901,12 @@ public class Order extends BaseCustomizableData<OrderAttribute> implements FormR
 		target.setSortWeight(getSortWeight());
 		target.setFulfillerStatus(getFulfillerStatus());
 		target.setFulfillerComment(getFulfillerComment());
+		target.setIntent(getIntent());
 		target.setFormNamespaceAndPath(getFormNamespaceAndPath());
-		
+
 		return target;
 	}
-	
+
 	/**
 	 * Checks whether this order's orderType matches or is a sub type of the specified one
 	 * 
@@ -1013,9 +1042,29 @@ public class Order extends BaseCustomizableData<OrderAttribute> implements FormR
 	 * @since 2.2.0
 	 */
 	public void setFulfillerComment(String fulfillerComment) {
-		this.fulfillerComment = fulfillerComment;		
+		this.fulfillerComment = fulfillerComment;
 	}
-	
+
+	/**
+	 * Returns the clinical intent of this order.
+	 *
+	 * @return the intent
+	 * @since 2.8.0
+	 */
+	public Intent getIntent() {
+		return intent;
+	}
+
+	/**
+	 * Sets the clinical intent of this order.
+	 *
+	 * @param intent the intent to set
+	 * @since 2.8.0
+	 */
+	public void setIntent(Intent intent) {
+		this.intent = intent;
+	}
+
 	/**
 	 * @return Returns the formNamespaceAndPath.
 	 * @since 2.5.0

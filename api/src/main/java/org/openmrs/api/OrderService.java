@@ -313,7 +313,20 @@ public interface OrderService extends OpenmrsService {
 	 */
 	@Authorized(PrivilegeConstants.EDIT_ORDERS)
 	public Order updateOrderFulfillerStatus(Order order, Order.FulfillerStatus orderFulfillerStatus, String fullFillerComment, String accessionNumber);
-	
+
+	/**
+	 * Updates the clinical intent of an order and persists the change.
+	 *
+	 * @param order the order whose intent should be changed
+	 * @param intent the new intent value; if null, the intent is not updated
+	 * @return the updated order
+	 * <strong>Should</strong> set the new intent
+	 * <strong>Should</strong> not update intent if null
+	 * <strong>Should</strong> save the changed order
+	 */
+	@Authorized(PrivilegeConstants.EDIT_ORDERS)
+	public Order updateOrderIntent(Order order, Order.Intent intent);
+
 	/**
 	 * Gets the order identified by a given order number
 	 * 

@@ -1411,6 +1411,52 @@ public class OrderServiceTest extends BaseContextSensitiveTest {
 	}
 
 	/**
+	 * @see OrderService#updateOrderIntent(Order, Order.Intent)
+	 */
+	@Test
+	public void updateOrderIntent_shouldSetTheNewIntent() {
+		Order order = orderService.getOrder(111);
+
+		orderService.updateOrderIntent(order, Order.Intent.PROPOSAL);
+
+		Context.flushSession();
+		Order updatedOrder = orderService.getOrder(111);
+		assertEquals(Order.Intent.PROPOSAL, updatedOrder.getIntent());
+	}
+
+	/**
+	 * @see OrderService#updateOrderIntent(Order, Order.Intent)
+	 */
+	@Test
+	public void updateOrderIntent_shouldNotUpdateIntentIfNull() {
+		Order order = orderService.getOrder(111);
+		orderService.updateOrderIntent(order, Order.Intent.FILLER_ORDER);
+		Context.flushSession();
+
+		orderService.updateOrderIntent(order, null);
+		Context.flushSession();
+
+		Order updatedOrder = orderService.getOrder(111);
+		assertEquals(Order.Intent.FILLER_ORDER, updatedOrder.getIntent());
+	}
+
+	/**
+	 * @see OrderService#updateOrderIntent(Order, Order.Intent)
+	 */
+	@Test
+	public void updateOrderIntent_shouldSaveTheChangedOrder() {
+		Order order = orderService.getOrder(111);
+
+		orderService.updateOrderIntent(order, Order.Intent.PLAN);
+
+		Context.flushSession();
+		Context.clearSession();
+
+		Order savedOrder = orderService.getOrder(111);
+		assertEquals(Order.Intent.PLAN, savedOrder.getIntent());
+	}
+
+	/**
 	 * @see OrderService#saveOrder(Order, OrderContext)
 	 */
 	@Test

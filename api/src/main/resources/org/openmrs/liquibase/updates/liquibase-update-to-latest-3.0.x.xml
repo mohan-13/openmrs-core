@@ -118,5 +118,17 @@
 			<column name="changed_by" type="int"/>
 		</addColumn>
 	</changeSet>
-	
+
+	<changeSet id="TRUNK-6560-2026-02-16" author="openmrs">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="orders" columnName="intent"/>
+			</not>
+		</preConditions>
+		<comment>Add intent column to orders table for TRUNK-6560</comment>
+		<addColumn tableName="orders">
+			<column name="intent" type="varchar(50)" defaultValue="ORDER"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
